@@ -185,8 +185,7 @@ class PowerSeries(object):
         Note also that we "memoize" our generator so that, if it is realized
         multiple times, the terms don't have to be recomputed. This provides
         a dramatic speedup since computing an operation like multiplication
-        requires many realizations of the generator. See the docstring for
-        the ``memoize_generator`` decorator above.
+        requires many realizations of the generator.
         """
         if self.__g:
             for term in self.__g():
@@ -399,7 +398,7 @@ class PowerSeries(object):
         return NotImplemented
     
     def __rdiv__(self, other):
-        """Easier way of expressing the reciprocal of self.
+        """Easier way of accessing the reciprocal of self.
         
         >>> e = expseries()
         >>> e * (Fraction(1, 1) / e) == nthpower(0)
@@ -589,11 +588,13 @@ def nthpower(n, coeff=Fraction(1, 1)):
     return PowerSeries(g=_n)
 
 
-# Some convenience "builtins" for PowerSeries; these can all replace the appropriate
-# builtins or module functions, plus there are some new ones
+# Some convenience functions for PowerSeries
 
 def exp(S):
-    """Convenience builtin for exponentiating PowerSeries.
+    """Convenience function for exponentiating PowerSeries.
+    
+    This can also replace the ``exp`` builtin, extending it to take
+    a PowerSeries as an argument.
     """
     if isinstance(S, PowerSeries):
         return S.exponential()
@@ -602,7 +603,7 @@ def exp(S):
 
 
 def inv(S):
-    """Convenience builtin for inverting PowerSeries.
+    """Convenience function for inverting PowerSeries.
     """
     if isinstance(S, PowerSeries):
         return S.inverse()
@@ -610,12 +611,16 @@ def inv(S):
 
 
 def deriv(S):
+    """Convenience function for differentiating PowerSeries.
+    """
     if isinstance(S, PowerSeries):
         return S.derivative()
     raise TypeError("Cannot differentiate object of type %s." % type(S))
 
 
 def integ(S, const=Fraction(0, 1)):
+    """Convenience function for integrating PowerSeries.
+    """
     if isinstance(S, PowerSeries):
         return S.integral(const)
     raise TypeError("Cannot integrate object of type %s." % type(S))
@@ -771,6 +776,9 @@ def sinseries():
 def cosseries():
     """Alternate way of representing cosine as a PowerSeries.
     
+    See remarks above under ``expseries`` for why we don't use
+    the factorial function as our primary implementation.
+    
     We use the fact that this function is the unique solution of
     
     d^2y/dx^2 = -y(x)
@@ -798,6 +806,18 @@ def cosseries():
 
 def tanseries():
     """The tangent function as a PowerSeries.
+    
+    >>> tanseries().showterms(10)
+    0
+    1
+    0
+    1/3
+    0
+    2/15
+    0
+    17/315
+    0
+    62/2835
     
     We use the fact that this function is the unique solution of
     
@@ -964,6 +984,18 @@ def coshseries():
 def tanhseries():
     """The hyperbolic tangent function as a PowerSeries.
     
+    >>> tanhseries().showterms(10)
+    0
+    1
+    0
+    -1/3
+    0
+    2/15
+    0
+    -17/315
+    0
+    62/2835
+    
     We use the fact that this function is the unique solution of
     
     dy/dx = 1 - y(x)^2
@@ -1090,8 +1122,8 @@ def altsinseries():
 def altcosseries():
     """The cosine function as a PowerSeries.
     
-    See remarks above under ``expseries`` for why we don't use
-    the factorial function as our primary implementation.
+    This is the factorial implementation, provided for
+    comparison.
     
     Check the alternate representation:
     
@@ -1103,18 +1135,6 @@ def altcosseries():
 
 def alttanseries():
     """Alternate way of representing tangent as a PowerSeries.
-    
-    >>> alttanseries().showterms(10)
-    0
-    1
-    0
-    1/3
-    0
-    2/15
-    0
-    17/315
-    0
-    62/2835
     
     Check the alternate representation:
     
@@ -1154,18 +1174,6 @@ def altcoshseries():
 
 def alttanhseries():
     """Alternate way of representing hyperbolic tangent as a PowerSeries.
-    
-    >>> alttanhseries().showterms(10)
-    0
-    1
-    0
-    -1/3
-    0
-    2/15
-    0
-    -17/315
-    0
-    62/2835
     
     Check the alternate representation:
     
