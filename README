@@ -1,5 +1,21 @@
 Python Power Series
 
+Power series representations in Python.
+Based on http://doc.cat-v.org/bell_labs/squinting_at_power_series/squint.pdf.
+
+This is a Python implementation of the pseudocode in the above paper by
+Doug McIlroy. Back when the paper was first written, McIlroy noted that
+languages with the key features needed for such an implementation were
+not in common use. Things are certainly different now; the Python
+implementation below is nowhere near as compact as the Haskell
+implementation that McIlroy put on the web in 2007, see here:
+
+http://www.cs.dartmouth.edu/~doug/powser.html
+
+All of the Haskell definitions there are one-liners. But I like Python,
+and AFAIK no one has done an implementation of this stuff in Python,
+so there you are. :-)
+
 See the docstring in powerseries.py for more information.
 
 Released under the open source MIT license:
