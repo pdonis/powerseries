@@ -45,6 +45,8 @@ Typical usage and comparison with normal decorators:
     Decorating test1
     >>> test1()
     Tested!
+    >>> test1()
+    Tested!
     >>> def deco(f):
     ...    return DelayedDecorator(decorator, f)
     ...
@@ -55,21 +57,40 @@ Typical usage and comparison with normal decorators:
     >>> test2()
     Decorating test2
     Tested again!
+    >>> test2()
+    Tested again!
     >>> class TestA(object):
     ...     @decorator
     ...     def test3(self):
     ...         print "Test from", self.__class__.__name__
     ...
     Decorating test3
-    >>> TestA().test3()
+    >>> a = TestA()
+    >>> aa = TestA()
+    >>> a.test3()
+    Test from TestA
+    >>> aa.test3()
+    Test from TestA
+    >>> aa.test3()
+    Test from TestA
+    >>> a.test3()
     Test from TestA
     >>> class TestB(object):
     ...     @deco
     ...     def test4(self):
     ...         print "Test from", self.__class__.__name__
     ...
-    >>> TestB().test4()
+    >>> b = TestB()
+    >>> bb = TestB()
+    >>> b.test4()
     Decorating test4
+    Test from TestB
+    >>> bb.test4()
+    Decorating test4
+    Test from TestB
+    >>> bb.test4()
+    Test from TestB
+    >>> b.test4()
     Test from TestB
 """
 
