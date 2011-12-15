@@ -187,6 +187,11 @@ class PowerSeries(object):
         
         This makes a ``PowerSeries`` an iterable, which combined with the
         properties below makes the notation simple.
+        
+        Note that we do *not* memoize this method directly; we factor out
+        the memoized generator and just realize it here. This is because
+        ``__iter__`` is a special method that is handled differently by
+        Python, so decorators don't work properly with it.
         """
         return self._gen()
     
