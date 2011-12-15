@@ -6,25 +6,19 @@ http://www.opensource.org/licenses/MIT
 
 A decorator for memoizing generators that works with both
 ordinary generator functions and generators that are methods
-on classes. See the documentation for the underlying class,
-``MemoizedGenerator``, for more details on the general idea
-behind memoizing generators.
+on classes, and delays decoration of its generator so that
+if it is a method, each instance of its class gets its own
+memoized generator. See the documentation for the underlying
+class, ``MemoizedGenerator``, for more details on the general
+idea behind memoizing generators. See the documentation for
+the ``DelayedDecorator`` class for more details on delaying
+decoration.
 """
 
-from AllPurposeDecorator import AllPurposeDecorator
+from functools import partial
+
+from DelayedDecorator import DelayedDecorator
 from MemoizedGenerator import MemoizedGenerator
 
 
-class memoize_generator(AllPurposeDecorator):
-    """Decorator for memoizing generators.
-    
-    This decorator wraps the ``MemoizedGenerator`` class so that it
-    can be used for methods as well as ordinary functions.
-    """
-    
-    def _decorated(self, cls=None, instance=None):
-        """Memoize the function we are decorating before returning it.
-        
-        Assumes that the function being decorated is a generator.
-        """
-        return MemoizedGenerator(self._func)
+memoize_generator = partial(DelayedDecorator, MemoizedGenerator)
