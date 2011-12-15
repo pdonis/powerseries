@@ -3,6 +3,28 @@
 Copyright (C) 2011 by Peter A. Donis.
 Released under the open source MIT license:
 http://www.opensource.org/licenses/MIT
+
+A wrapper class for generators that "memoizes" them, so that even
+if the generator is realized multiple times, each term only gets
+computed once (after that the result is simply returned from a
+cache).
+
+This class was written for use by the ``PowerSeries`` class, but
+the implementation is general. For example, it correctly handles
+finite-length generators, even though all ``PowerSeries`` instances
+will look infinite as far as this class is concerned (i.e., a
+wrapped ``PowerSeries`` generator will never set the class's
+internal ``__empty`` flag to ``True``).
+
+Functional programming types will note that this implementation
+is done using a class, not a function. Doing it as a function in
+Python would require some inelegant hacks with mutable containers
+since Python does not allow a closure's inner function to mutate
+variables in the closure's outer function. (Python 2.7 adds the
+``nonlocal`` keyword to allow such behavior, but I didn't want to
+require 2.7 for this since many Linux distributions are still at
+2.6 as of this writing.) Lisp hackers will of course make smug
+comments on this limitation of Python's, but I don't care. :-)
 """
 
 from itertools import count
@@ -22,23 +44,6 @@ class MemoizedGenerator(object):
     and flexibility, it is recommended that the ``memoize_generator``
     decorator be used instead, since that automatically handles both
     ordinary functions and methods.
-    
-    This class was written for use by the ``PowerSeries`` class, but
-    the implementation is general. For example, it correctly handles
-    finite-length generators, even though all ``PowerSeries`` instances
-    will look infinite as far as this class is concerned (i.e., a
-    wrapped ``PowerSeries`` generator will never set the class's
-    internal ``__empty`` flag to ``True``).
-    
-    Functional programming types will note that this implementation
-    is done using a class, not a function. Doing it as a function in
-    Python would require some inelegant hacks with mutable containers
-    since Python does not allow a closure's inner function to mutate
-    variables in the closure's outer function. (Python 2.7 adds the
-    ``nonlocal`` keyword to allow such behavior, but I didn't want to
-    require 2.7 for this since many Linux distributions are still at
-    2.6 as of this writing.) Lisp hackers will of course make smug
-    comments on this limitation of Python's, but I don't care. :-)
     """
     
     def __init__(self, gen):
@@ -50,10 +55,11 @@ class MemoizedGenerator(object):
         self.__empty = False
     
     def __call__(self, *args, **kwargs):
-        """Direct function call syntax support.
+        """Make instances of this class callable.
         
-        This makes an instance of this class work just like the underlying
-        generator function when called directly.
+        This method must be present, and must be a generator
+        function, so that class instances work the same as their
+        underlying generators.
         """
         if not (self.__empty or self.__iter):
             self.__iter = self.__gen(*args, **kwargs)

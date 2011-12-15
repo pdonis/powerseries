@@ -3,6 +3,9 @@
 Copyright (C) 2011 by Peter A. Donis.
 Released under the open source MIT license:
 http://www.opensource.org/licenses/MIT
+
+All-purpose decorator mixin class, to allow the same decorator to
+wrap both ordinary functions and methods of classes.
 """
 
 from new import instancemethod
@@ -19,7 +22,7 @@ class AllPurposeDecorator(object):
     
       - If the decorator is called directly (i.e., the ``__call__`` method is
         invoked), it assumes that the decorator it wraps is an ordinary
-        function and just returns it directly;
+        function, so it calls it and returns its result.
       
       - If the decorator is accessed as an attribute via the descriptor
         protocol (i.e., the ``__get__`` method is invoked), it assumes
