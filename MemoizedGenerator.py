@@ -92,6 +92,11 @@ class MemoizedGenerator(object):
     and flexibility, it is recommended that the ``memoize_generator``
     decorator be used instead, since that automatically handles both
     ordinary functions and methods.
+    
+    Note that this class is *not* thread-safe; it assumes that all
+    realizations of the memoized generator run in the same thread,
+    so that it is guaranteed that no more than one realization will
+    be mutating the memoization fields at a time.
     """
     
     def __init__(self, gen):
@@ -112,10 +117,15 @@ class MemoizedGenerator(object):
         if not (self.__empty or self.__iter):
             self.__iter = self.__gen(*args, **kwargs)
         for n in count():
+            # First check the cache
             if n < len(self.__cache):
                 yield self.__cache[n]
+            # See if another copy of the generator emptied it
+            # since our last iteration
             elif self.__empty:
                 break
+            # If none of the above, advance the generator
+            # (which may empty it)
             else:
                 try:
                     term = next(self.__iter)
