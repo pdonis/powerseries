@@ -7,8 +7,9 @@ This is a Python implementation of the pseudocode in the above paper by
 Doug McIlroy. Back when the paper was first written, McIlroy noted that
 languages with the key features needed for such an implementation were
 not in common use. Things are certainly different now; the Python
-implementation below is nowhere near as compact as the Haskell
-implementation that McIlroy put on the web in 2007, see here:
+implementation given here is a fairly straightforward expression of
+the algorithms in the paper, and it's fast, but McIlroy put a Haskell
+implementation on the web in 2007 that's way more compact; see here:
 
 http://www.cs.dartmouth.edu/~doug/powser.html
 
