@@ -25,6 +25,54 @@ variables in the closure's outer function. (Python 2.7 adds the
 require 2.7 for this since many Linux distributions are still at
 2.6 as of this writing.) Lisp hackers will of course make smug
 comments on this limitation of Python's, but I don't care. :-)
+
+Typical usage and comparison with non-memoized generators:
+    
+    >>> def gen():
+    ...     for n in xrange(2):
+    ...         print "Yielding", n
+    ...         yield n
+    ...     print "Stopping"
+    ...
+    >>> g1 = gen()
+    >>> g2 = gen()
+    >>> next(g1)
+    Yielding 0
+    0
+    >>> next(g2)
+    Yielding 0
+    0
+    >>> next(g2)
+    Yielding 1
+    1
+    >>> next(g1)
+    Yielding 1
+    1
+    >>> def tryit(g):
+    ...     try:
+    ...         next(g)
+    ...     except StopIteration:
+    ...         pass
+    >>> tryit(g1)
+    Stopping
+    >>> tryit(g2)
+    Stopping
+    >>> gen = MemoizedGenerator(gen)
+    >>> g3 = gen()
+    >>> g4 = gen()
+    >>> next(g3)
+    Yielding 0
+    0
+    >>> next(g4)
+    0
+    >>> next(g4)
+    Yielding 1
+    1
+    >>> next(g3)
+    1
+    >>> tryit(g3)
+    Stopping
+    >>> tryit(g4)
 """
 
 from itertools import count
@@ -77,3 +125,8 @@ class MemoizedGenerator(object):
                 else:
                     self.__cache.append(term)
                     yield term
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()

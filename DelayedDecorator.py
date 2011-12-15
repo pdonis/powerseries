@@ -31,6 +31,46 @@ memoized generator, as desired. As a side effect, the decorator is
 also applied the first time the method is called as an unbound
 method on the class itself; this use case should be very rare, but
 it is supported for consistency with the behavior of normal methods.
+
+Typical usage and comparison with normal decorators:
+    
+    >>> def decorator(f):
+    ...     print "Decorating", f.__name__
+    ...     return f
+    ...
+    >>> @decorator
+    ... def test1():
+    ...     print "Tested!"
+    ...
+    Decorating test1
+    >>> test1()
+    Tested!
+    >>> def deco(f):
+    ...    return DelayedDecorator(decorator, f)
+    ...
+    >>> @deco
+    ... def test2():
+    ...     print "Tested again!"
+    ...
+    >>> test2()
+    Decorating test2
+    Tested again!
+    >>> class TestA(object):
+    ...     @decorator
+    ...     def test3(self):
+    ...         print "Test from", self.__class__.__name__
+    ...
+    Decorating test3
+    >>> TestA().test3()
+    Test from TestA
+    >>> class TestB(object):
+    ...     @deco
+    ...     def test4(self):
+    ...         print "Test from", self.__class__.__name__
+    ...
+    >>> TestB().test4()
+    Decorating test4
+    Test from TestB
 """
 
 from new import instancemethod
@@ -89,8 +129,7 @@ class DelayedDecorator(object):
         """Direct function call syntax support.
         
         This makes an instance of this class work just like the underlying
-        decorator function when called directly. This use case assumes
-        that the underlying decorator is an ordinary function, not a method.
+        decorated function when called directly as an ordinary function.
         An internal reference to the decorated function is stored so that
         future direct calls will get the stored function.
         """
@@ -119,3 +158,8 @@ class DelayedDecorator(object):
         else:
             raise ValueError("Must supply instance or class to descriptor.")
         return deco
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
