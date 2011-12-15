@@ -807,7 +807,7 @@ def cosseries():
 def tanseries():
     """The tangent function as a PowerSeries.
     
-    >>> tanseries().showterms(10)
+    >>> tanseries().showterms()
     0
     1
     0
@@ -840,7 +840,7 @@ def tanseries():
 def secseries():
     """The secant function as a PowerSeries.
     
-    >>> secseries().showterms(10)
+    >>> secseries().showterms()
     1
     0
     1/2
@@ -858,7 +858,7 @@ def secseries():
 def arcsinseries():
     """The arcsine function as a PowerSeries.
     
-    >>> arcsinseries().showterms(10)
+    >>> arcsinseries().showterms()
     0
     1
     0
@@ -888,7 +888,7 @@ def arcsinseries():
 def arctanseries():
     """The arctangent function as a PowerSeries.
     
-    >>> arctanseries().showterms(10)
+    >>> arctanseries().showterms()
     0
     1
     0
@@ -984,7 +984,7 @@ def coshseries():
 def tanhseries():
     """The hyperbolic tangent function as a PowerSeries.
     
-    >>> tanhseries().showterms(10)
+    >>> tanhseries().showterms()
     0
     1
     0
@@ -1013,7 +1013,18 @@ def tanhseries():
 
 def sechseries():
     """The hyperbolic secant function as a PowerSeries.
-    True
+    
+    >>> sechseries().showterms()
+    1
+    0
+    -1/2
+    0
+    5/24
+    0
+    -61/720
+    0
+    277/8064
+    0
     """
     return coshseries().reciprocal()
 
@@ -1021,7 +1032,7 @@ def sechseries():
 def arcsinhseries():
     """The hyperbolic arcsine function as a PowerSeries.
     
-    >>> arcsinhseries().showterms(10)
+    >>> arcsinhseries().showterms()
     0
     1
     0
@@ -1051,7 +1062,7 @@ def arcsinhseries():
 def arctanhseries():
     """The hyperbolic arctangent function as a PowerSeries.
     
-    >>> arctanhseries().showterms(10)
+    >>> arctanhseries().showterms()
     0
     1
     0
