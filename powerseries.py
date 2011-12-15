@@ -116,18 +116,6 @@ from math import factorial
 from memoize_generator import memoize_generator
 
 
-# These are for convenience in simplifying notation
-
-def first_n(n, iterable):
-    for x in islice(iterable, n):
-        yield x
-
-
-def from_n(n, iterable):
-    for x in islice(iterable, n, None):
-        yield x
-
-
 class PowerSeries(object):
     """Power series encapsulation.
     
@@ -217,7 +205,7 @@ class PowerSeries(object):
         determines the limit.
         """
         if isinstance(other, PowerSeries):
-            return all(s == o for s, o in first_n(self.testlimit, izip(self, other)))
+            return all(s == o for s, o in islice(izip(self, other), self.testlimit))
         return NotImplemented
     
     def __ne__(self, other):
@@ -233,14 +221,14 @@ class PowerSeries(object):
         
         If ``num`` is not given, it defaults to ``self.testlimit``.
         """
-        for term in first_n(num or self.testlimit, self):
+        for term in islice(self, num or self.testlimit):
             print term
     
     @property
     def zero(self):
         """Return the zeroth term of this series.
         """
-        for term in first_n(1, self):
+        for term in islice(self, 1):
             return term
     
     @property
@@ -266,7 +254,7 @@ class PowerSeries(object):
         docstring for the ``xmul`` method.
         """
         def _t():
-            for term in from_n(1, self):
+            for term in islice(self, 1, None):
                 yield term
         return PowerSeries(g=_t)
     
