@@ -128,17 +128,17 @@ class PowerSeries(object):
     
     testlimit = 10
     
-    def __init__(self, f=None, g=None, l=None):
+    def __init__(self, g=None, f=None, l=None):
         """Construct a PowerSeries from a term function, generator, or list.
+        
+        If ``g`` is given, construct the series using ``g`` as its generator.
         
         If ``f`` is given, construct the series using ``f`` as the "term
         function"; internally, the function is used to construct a generator
         that represents the series.
         
-        If ``g`` is given, construct the series using ``g`` as its generator.
-        
         If ``l`` is given, construct a finite series with terms from ``l`` in
-        order.
+        order; internally, a generator is constructed that yields the terms.
         
         If none of ``f``, ``g``, ``l`` is present, the series will be empty.
         """
@@ -246,7 +246,7 @@ class PowerSeries(object):
         """
         def _h():
             yield self.zero
-        return PowerSeries(g=_h)
+        return PowerSeries(_h)
     
     @property
     def tail(self):
@@ -261,7 +261,7 @@ class PowerSeries(object):
         def _t():
             for term in islice(self, 1, None):
                 yield term
-        return PowerSeries(g=_t)
+        return PowerSeries(_t)
     
     @property
     def xmul(self):
@@ -287,7 +287,7 @@ class PowerSeries(object):
             yield Fraction(0, 1)
             for term in self:
                 yield term
-        return PowerSeries(g=_x)
+        return PowerSeries(_x)
     
     def __add__(self, other):
         """Return a PowerSeries instance that sums self and other.
@@ -310,7 +310,7 @@ class PowerSeries(object):
                     yield sum(terms)
         else:
             return NotImplemented
-        return PowerSeries(g=_a)
+        return PowerSeries(_a)
     
     __radd__ = __add__
     
@@ -361,7 +361,7 @@ class PowerSeries(object):
                     yield sum(terms)
         else:
             return NotImplemented
-        return PowerSeries(g=_m)
+        return PowerSeries(_m)
     
     __rmul__ = __mul__
     
@@ -418,7 +418,7 @@ class PowerSeries(object):
                 yield self.zero
                 for term in (other.tail * self.tail(other)):
                     yield term
-            return PowerSeries(g=_c)
+            return PowerSeries(_c)
         raise TypeError("Can only compose a PowerSeries with another one.")
     
     def __call__(self, other):
@@ -437,7 +437,7 @@ class PowerSeries(object):
         def _d():
             for n, term in enumerate(self.tail):
                 yield Fraction(n + 1, 1) * term
-        return PowerSeries(g=_d)
+        return PowerSeries(_d)
     
     def integral(self, const=Fraction(0, 1)):
         """Return a PowerSeries representing the integral of this one with respect to x.
@@ -459,7 +459,7 @@ class PowerSeries(object):
             yield const
             for n, term in enumerate(self):
                 yield Fraction(1, n + 1) * term
-        return PowerSeries(g=_i)
+        return PowerSeries(_i)
     
     def exponential(self):
         """Return a PowerSeries representing e ** self.
@@ -492,7 +492,7 @@ class PowerSeries(object):
         def _e():
             for term in (X * self.derivative()).integral(Fraction(1, 1)):
                 yield term
-        X = PowerSeries(g=_e)
+        X = PowerSeries(_e)
         return X
     
     def reciprocal(self):
@@ -523,7 +523,7 @@ class PowerSeries(object):
             yield recip
             for term in ((- recip) * (self.tail * R)):
                 yield term
-        R = PowerSeries(g=_r)
+        R = PowerSeries(_r)
         return R
     
     def inverse(self):
@@ -557,7 +557,7 @@ class PowerSeries(object):
             T = I.tail
             for term in ((- recip) * ((T * T) * F.tail(I))):
                 yield term
-        I = PowerSeries(g=_i)
+        I = PowerSeries(_i)
         return I
 
 
@@ -579,7 +579,7 @@ def nthpower(n, coeff=Fraction(1, 1)):
         for i in xrange(n):
             yield Fraction(0, 1)
         yield coeff
-    return PowerSeries(g=_n)
+    return PowerSeries(_n)
 
 
 # Some convenience functions for PowerSeries
@@ -633,7 +633,7 @@ def constseries(const):
     >>> constseries(Fraction(1, 1)) == ONE / (ONE - X)
     True
     """
-    return PowerSeries(lambda n: const)
+    return PowerSeries(f=lambda n: const)
 
 
 def altconstseries(const):
@@ -647,13 +647,13 @@ def altconstseries(const):
     >>> altconstseries(Fraction(1, 1)) == ONE / (ONE + X)
     True
     """
-    return PowerSeries(lambda n: Fraction((-1)**n, 1) * const)
+    return PowerSeries(f=lambda n: Fraction((-1)**n, 1) * const)
 
 
 def nseries():
     """The natural numbers as a PowerSeries.
     """
-    return PowerSeries(lambda n: Fraction(n, 1))
+    return PowerSeries(f=lambda n: Fraction(n, 1))
 
 
 def harmonicseries():
@@ -681,7 +681,7 @@ def harmonicseries():
     >>> integ(constseries(Fraction(1, 1))) == harmonicseries()
     True
     """
-    return PowerSeries(lambda n: Fraction(1, n) if n else Fraction(0, 1))
+    return PowerSeries(f=lambda n: Fraction(1, n) if n else Fraction(0, 1))
 
 
 def altharmonicseries():
@@ -701,7 +701,7 @@ def altharmonicseries():
     >>> integ(altconstseries(Fraction(1, 1))) == altharmonicseries()
     True
     """
-    return PowerSeries(lambda n: Fraction((-1)**(n-1), n) if n else Fraction(0, 1))
+    return PowerSeries(f=lambda n: Fraction((-1)**(n-1), n) if n else Fraction(0, 1))
 
 
 def expseries():
@@ -737,7 +737,7 @@ def expseries():
     def _exp():
         for term in integ(EXP, Fraction(1, 1)):
             yield term
-    EXP = PowerSeries(g=_exp)
+    EXP = PowerSeries(_exp)
     return EXP
 
 
@@ -763,7 +763,7 @@ def sinseries():
     def _sin():
         for term in integ(integ(-SIN, Fraction(1, 1))):
             yield term
-    SIN = PowerSeries(g=_sin)
+    SIN = PowerSeries(_sin)
     return SIN
 
 
@@ -794,7 +794,7 @@ def cosseries():
     def _cos():
         for term in integ(integ(-COS), Fraction(1, 1)):
             yield term
-    COS = PowerSeries(g=_cos)
+    COS = PowerSeries(_cos)
     return COS
 
 
@@ -827,7 +827,7 @@ def tanseries():
         ONE = nthpower(0)
         for term in integ(ONE + (TAN * TAN)):
             yield term
-    TAN = PowerSeries(g=_tan)
+    TAN = PowerSeries(_tan)
     return TAN
 
 
@@ -915,7 +915,7 @@ def arctanseries():
         X2 = nthpower(2)
         for term in integ(ONE / (ONE + X2)):
             yield term
-    return PowerSeries(g=_arctan)
+    return PowerSeries(_arctan)
 
 
 def sinhseries():
@@ -940,7 +940,7 @@ def sinhseries():
     def _sinh():
         for term in integ(integ(SINH, Fraction(1, 1))):
             yield term
-    SINH = PowerSeries(g=_sinh)
+    SINH = PowerSeries(_sinh)
     return SINH
 
 
@@ -971,7 +971,7 @@ def coshseries():
     def _cosh():
         for term in integ(integ(COSH), Fraction(1, 1)):
             yield term
-    COSH = PowerSeries(g=_cosh)
+    COSH = PowerSeries(_cosh)
     return COSH
 
 
@@ -1001,7 +1001,7 @@ def tanhseries():
         ONE = nthpower(0)
         for term in integ(ONE - (TANH * TANH)):
             yield term
-    TANH = PowerSeries(g=_tanh)
+    TANH = PowerSeries(_tanh)
     return TANH
 
 
@@ -1089,7 +1089,7 @@ def arctanhseries():
         X2 = nthpower(2)
         for term in integ(ONE / (ONE - X2)):
             yield term
-    return PowerSeries(g=_arctanh)
+    return PowerSeries(_arctanh)
 
 
 # Alternate implementations of some series using factorials, provided
@@ -1107,7 +1107,7 @@ def altexpseries():
     >>> expseries() == altexpseries()
     True
     """
-    return PowerSeries(lambda n: Fraction(1, factorial(n)))
+    return PowerSeries(f=lambda n: Fraction(1, factorial(n)))
 
 
 def altsinseries():
@@ -1121,7 +1121,7 @@ def altsinseries():
     >>> sinseries() == altsinseries()
     True
     """
-    return PowerSeries(lambda n: Fraction((-1)**((n-1)/2), factorial(n)) if (n % 2) == 1 else Fraction(0, 1))
+    return PowerSeries(f=lambda n: Fraction((-1)**((n-1)/2), factorial(n)) if (n % 2) == 1 else Fraction(0, 1))
 
 
 def altcosseries():
@@ -1135,7 +1135,7 @@ def altcosseries():
     >>> cosseries() == altcosseries()
     True
     """
-    return PowerSeries(lambda n: Fraction((-1)**(n/2), factorial(n)) if (n % 2) == 0 else Fraction(0, 1))
+    return PowerSeries(f=lambda n: Fraction((-1)**(n/2), factorial(n)) if (n % 2) == 0 else Fraction(0, 1))
 
 
 def alttanseries():
@@ -1160,7 +1160,7 @@ def altsinhseries():
     >>> sinhseries() == altsinhseries()
     True
     """
-    return PowerSeries(lambda n: Fraction(1, factorial(n)) if (n % 2) == 1 else Fraction(0, 1))
+    return PowerSeries(f=lambda n: Fraction(1, factorial(n)) if (n % 2) == 1 else Fraction(0, 1))
 
 
 def altcoshseries():
@@ -1174,7 +1174,7 @@ def altcoshseries():
     >>> coshseries() == altcoshseries()
     True
     """
-    return PowerSeries(lambda n: Fraction(1, factorial(n)) if (n % 2) == 0 else Fraction(0, 1))
+    return PowerSeries(f=lambda n: Fraction(1, factorial(n)) if (n % 2) == 0 else Fraction(0, 1))
 
 
 def alttanhseries():
