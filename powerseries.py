@@ -19,7 +19,7 @@ implementation on the web in 2007 that's way more compact; see here:
 
 http://www.cs.dartmouth.edu/~doug/powser.html
 
-All of the Haskell definitions there are one-liners. But I like Python,
+All of the key Haskell definitions there are one-liners. But I like Python,
 and AFAIK no one has done an implementation of this stuff in Python,
 so here we go. :-)
 
