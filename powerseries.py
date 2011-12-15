@@ -677,10 +677,10 @@ def harmonicseries():
     
     Note that this gives a much faster way of computing ln(1 - x) than
     actually inverting -e^x + 1; the latter series, as you can test by
-    trying to raise ``testlimit`` much beyond 6 and then retrying the
+    trying to raise ``testlimit`` high enough and then retrying the
     above doctest, has a computing time that grows rapidly with ``n``,
     while the harmonic series, of course, has constant computing time
-    per term.
+    per term (and also has the benefit of not overflowing the stack).
     
     The above also implies that this series is the integral of the
     constant series:
