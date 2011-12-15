@@ -34,7 +34,7 @@ series, give the expected results: for example, that EXP(X) == EXP, i.e.,
 that the exponential series, when composed with the series representing x,
 gives back itself (and similarly for other series).
     
-    >>> ZERO = constseries(Fraction(0, 1))
+    >>> ZERO = PowerSeries()
     >>> ONE = nthpower(0)
     >>> X = nthpower(1)
     >>> N = nseries()
@@ -488,7 +488,7 @@ class PowerSeries(object):
         
         We can also express the fact that e^0 == 1:
         
-        >>> constseries(Fraction(0, 1)).exponential() == nthpower(0)
+        >>> PowerSeries().exponential() == nthpower(0)
         True
         
         Note that we can't exponentiate a series with a nonzero first term by this
