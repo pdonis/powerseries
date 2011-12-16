@@ -158,6 +158,10 @@ class PowerSeries(object):
         else:
             # Empty series
             self.__g = None
+        # Internal fields for storing cached results of operations
+        self.__D = self.__X = self.__R = self.__I = None
+        self.__Cs = {}
+        self.__Is = {}
     
     @memoize_generator
     def _gen(self):
@@ -412,6 +416,10 @@ class PowerSeries(object):
         >>> X(X) == X
         True
         """
+        oid = id(other)
+        oC = self.__Cs.get(oid)
+        if oC:
+            return oC
         if isinstance(other, PowerSeries):
             if other.zero != 0:
                 raise ValueError("First term of composed PowerSeries must be 0.")
@@ -419,7 +427,8 @@ class PowerSeries(object):
                 yield self.zero
                 for term in (other.tail * self.tail(other)):
                     yield term
-            return PowerSeries(_c)
+            C = self.__Cs[oid] = PowerSeries(_c)
+            return C
         raise TypeError("Can only compose a PowerSeries with another one.")
     
     def __call__(self, other):
@@ -435,10 +444,13 @@ class PowerSeries(object):
         >>> all(nthpower(n).derivative() == Fraction(n, 1) * nthpower(n - 1) for n in xrange(10))
         True
         """
+        if self.__D:
+            return self.__D
         def _d():
             for n, term in enumerate(self.tail):
                 yield Fraction(n + 1, 1) * term
-        return PowerSeries(_d)
+        D = self.__D = PowerSeries(_d)
+        return D
     
     def integral(self, const=Fraction(0, 1)):
         """Return a PowerSeries representing the integral of this one with respect to x.
@@ -456,11 +468,15 @@ class PowerSeries(object):
         >>> cos == cos.integral().derivative()
         True
         """
+        cI = self.__Is.get(const)
+        if cI:
+            return cI
         def _i():
             yield const
             for n, term in enumerate(self):
                 yield Fraction(1, n + 1) * term
-        return PowerSeries(_i)
+        I = self.__Is[const] = PowerSeries(_i)
+        return I
     
     def exponential(self):
         """Return a PowerSeries representing e ** self.
@@ -488,12 +504,14 @@ class PowerSeries(object):
         Note that we can't exponentiate a series with a nonzero first term by this
         method.
         """
+        if self.__X:
+            return self.__X
         if self.zero != 0:
             raise ValueError("First term of exponentiated PowerSeries must be 0.")
         def _e():
             for term in (X * self.derivative()).integral(Fraction(1, 1)):
                 yield term
-        X = PowerSeries(_e)
+        X = self.__X = PowerSeries(_e)
         return X
     
     def reciprocal(self):
@@ -517,6 +535,8 @@ class PowerSeries(object):
         Note that we can't take the reciprocal of a series with a zero first term
         by this method.
         """
+        if self.__R:
+            return self.__R
         if self.zero == 0:
             raise ValueError("Cannot take reciprocal of PowerSeries with first term 0.")
         def _r():
@@ -524,7 +544,7 @@ class PowerSeries(object):
             yield recip
             for term in ((- recip) * (self.tail * R)):
                 yield term
-        R = PowerSeries(_r)
+        R = self.__R = PowerSeries(_r)
         return R
     
     def inverse(self):
@@ -546,6 +566,8 @@ class PowerSeries(object):
         Note that we can't take the inverse of a series with a nonzero first term by
         this method.
         """
+        if self.__I:
+            return self.__I
         if self.zero != 0:
             raise ValueError("Cannot invert PowerSeries with nonzero first term.")
         if self.tail.zero == 0:
@@ -558,7 +580,7 @@ class PowerSeries(object):
             T = I.tail
             for term in ((- recip) * ((T * T) * F.tail(I))):
                 yield term
-        I = PowerSeries(_i)
+        I = self.__I = PowerSeries(_i)
         return I
 
 

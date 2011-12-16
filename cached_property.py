@@ -13,38 +13,24 @@ object every time, to take maximum advantage of other
 optimizations such as memoizing each series' generator.
 """
 
-class CachedProperty(object):
-    """Non-data descriptor class for cached property.
+
+class cached_property(object):
+    """Decorator class for cached property.
     
-    The expected typical use case is to be called from the
-    cached_property function, which generates the name of
-    the property automatically, but the class can also be
-    instantiated directly with an explicit name supplied.
+    This decorator works the same as the built-in ``property``
+    decorator, but caches the property value in the instance
+    dictionary so that the underlying function is only called
+    once. The property is read-only.
     """
     
-    def __init__(self, aname, fget, doc=None):
-        self.aname = aname
-        self.fget = fget
+    def __init__(self, fget, name=None, doc=None):
+        self.__fget = fget
+        self.__name = name or fget.__name__
         self.__doc__ = doc
     
-    def __get__(self, obj, objtype=None):
-        if obj is None:
+    def __get__(self, instance, cls):
+        if instance is None:
             return self
-        result = self.fget(obj)
-        setattr(obj, self.aname, result)
+        result = self.__fget(instance)
+        setattr(instance, self.__name, result)
         return result
-
-
-def cached_property(fget, doc=None):
-    """Function to return cached property instance.
-    
-    We need this as a wrapper to supply the name of the property
-    by magic rather than force the user to enter it by hand;
-    this is done by looking up the name of the fget function
-    (which also allows this function to be used as a decorator
-    and have the intended effect).
-    """
-    
-    if doc is None:
-        doc = fget.__doc__
-    return CachedProperty(fget.__name__, fget, doc)
