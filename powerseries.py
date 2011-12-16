@@ -113,6 +113,7 @@ from fractions import Fraction
 from itertools import count, islice, izip, izip_longest
 from math import factorial
 
+from cached_property import cached_property
 from memoize_generator import memoize_generator
 
 
@@ -229,14 +230,14 @@ class PowerSeries(object):
         for term in islice(self, num or self.testlimit):
             print term
     
-    @property
+    @cached_property
     def zero(self):
         """Return the zeroth term of this series.
         """
         for term in islice(self, 1):
             return term
     
-    @property
+    @cached_property
     def head(self):
         """Return a PowerSeries representing the "head" of this one.
         
@@ -248,7 +249,7 @@ class PowerSeries(object):
             yield self.zero
         return PowerSeries(_h)
     
-    @property
+    @cached_property
     def tail(self):
         """Return a PowerSeries representing the "tail" of this one.
         
@@ -263,7 +264,7 @@ class PowerSeries(object):
                 yield term
         return PowerSeries(_t)
     
-    @property
+    @cached_property
     def xmul(self):
         """Return a PowerSeries representing x * this one.
         
