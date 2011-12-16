@@ -11,6 +11,53 @@ is expensive, or when (as in the case of the ``PowerSeries``
 class) it is desired to have the property return the same
 object every time, to take maximum advantage of other
 optimizations such as memoizing each series' generator.
+
+Typical usage:
+
+    >>> class Test(object):
+    ...     def test(self):
+    ...         print "Doing initial calculation..."
+    ...         return "Test done."
+    ...     test = cached_property(test)
+    ... 
+    >>> t = Test()
+    >>> 'test' in t.__dict__
+    False
+    >>> print t.test
+    Doing initial calculation...
+    Test done.
+    >>> 'test' in t.__dict__
+    True
+    >>> print t.test
+    Test done.
+
+The cached value can be explicitly deleted from the instance
+dict, or overwritten by an explicit assignment to the
+attribute. Deletion "resets" the property, so it has to be
+computed again on the next access.
+
+    >>> del t.test
+    >>> 'test' in t.__dict__
+    False
+    >>> t.test = "Other value."
+    >>> print t.test
+    Other value.
+    >>> del t.test
+    >>> print t.test
+    Doing initial calculation...
+    Test done.
+
+One other wrinkle: ``hasattr`` also triggers the property
+computation.
+
+    >>> del t.test
+    >>> hasattr(t, 'test')
+    Doing initial calculation...
+    True
+    >>> 'test' in t.__dict__
+    True
+    >>> print t.test
+    Test done.
 """
 
 
@@ -34,3 +81,8 @@ class cached_property(object):
         result = self.__fget(instance)
         setattr(instance, self.__name, result)
         return result
+
+
+if __name__ == '__main__':
+    import doctest
+    doctest.testmod()
