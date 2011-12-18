@@ -85,6 +85,8 @@ gives back itself (and similarly for other series).
     True
     >>> all(s(inv(s)) == X for s in testseries)
     True
+    >>> all(exp(log(s)) - ONE == s for s in testseries)
+    True
     >>> inv(X) == X
     True
     >>> exp(ZERO) == ONE
@@ -113,7 +115,7 @@ gives back itself (and similarly for other series).
 
 from fractions import Fraction
 from itertools import count, islice, izip, izip_longest
-from math import factorial, sqrt as _sqrt, exp as _exp
+from math import factorial, sqrt as _sqrt, exp as _exp, log as _log
 
 from cached_property import cached_property
 from memoize_generator import memoize_generator
@@ -613,11 +615,24 @@ class PowerSeries(object):
         We can't actually take the log of self because log(0) diverges; we can only
         do a power series expansion about some nonzero x0, and the simplest choice
         is obviously x0 = 1. This means we can't take the log of a series with a
-        nonzero constant term.
+        nonzero constant term by this method.
         
         The following is the easiest test of this method:
         
         >>> nthpower(1).logarithm() == altharmonicseries()
+        True
+        
+        We can also express the fact that log(1) == 0, since this corresponds to
+        calling this method on the zero series:
+        
+        >>> PowerSeries().logarithm() == PowerSeries()
+        True
+        
+        Finally, this method obeys the identity:
+        
+        >>> ONE = nthpower(0)
+        >>> X = nthpower(1)
+        >>> X.logarithm().exponential() - ONE == X
         True
         """
         if self.__X and self.__L:
@@ -667,6 +682,17 @@ def exp(S):
     if isinstance(S, PowerSeries):
         return S.exponential()
     return _exp(S)
+
+
+def log(S):
+    """Convenience function for taking logarithms of PowerSeries.
+    
+    This can also replace the ``math.log`` function, extending it to
+    take a PowerSeries as an argument.
+    """
+    if isinstance(S, PowerSeries):
+        return S.logarithm()
+    return _log(S)
 
 
 def sqrt(S):
