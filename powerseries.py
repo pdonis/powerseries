@@ -827,7 +827,7 @@ def sinseries():
 
 
 def cosseries():
-    """Alternate way of representing cosine as a PowerSeries.
+    """The cosine function as a PowerSeries.
     
     See remarks above under ``expseries`` for why we don't use
     the factorial function as our primary implementation.
@@ -1184,7 +1184,7 @@ def altsinseries():
 
 
 def altcosseries():
-    """The cosine function as a PowerSeries.
+    """Alternate way of representing cosine as a PowerSeries.
     
     This is the factorial implementation, provided for
     comparison.
