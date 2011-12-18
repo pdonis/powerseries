@@ -161,7 +161,7 @@ class PowerSeries(object):
             # Empty series
             self.__g = None
         # Internal fields for storing cached results of operations
-        self.__D = self.__X = self.__R = self.__I = self.__S = None
+        self.__D = self.__E = self.__R = self.__I = self.__S = self.__L = self.__X = None
         self.__Cs = {}
         self.__Is = {}
     
@@ -504,15 +504,15 @@ class PowerSeries(object):
         Note that we can't exponentiate a series with a nonzero first term by this
         method.
         """
-        if self.__X:
-            return self.__X
+        if self.__E:
+            return self.__E
         if self.zero != 0:
             raise ValueError("First term of exponentiated PowerSeries must be 0.")
         def _e():
-            for term in (X * self.derivative()).integral(Fraction(1, 1)):
+            for term in (E * self.derivative()).integral(Fraction(1, 1)):
                 yield term
-        X = self.__X = PowerSeries(_e)
-        return X
+        E = self.__E = PowerSeries(_e)
+        return E
     
     def reciprocal(self):
         """Return a PowerSeries representing the reciprocal of self.
@@ -606,6 +606,33 @@ class PowerSeries(object):
                 yield term
         S = self.__S = PowerSeries(_s)
         return S
+    
+    def logarithm(self):
+        """Return a PowerSeries representing log(1 + self).
+        
+        We can't actually take the log of self because log(0) diverges; we can only
+        do a power series expansion about some nonzero x0, and the simplest choice
+        is obviously x0 = 1. This means we can't take the log of a series with a
+        nonzero constant term.
+        
+        The following is the easiest test of this method:
+        
+        >>> nthpower(1).logarithm() == altharmonicseries()
+        True
+        """
+        if self.__X and self.__L:
+            return self.__L
+        if self.zero != 0:
+            raise ValueError("Cannot take logarithm of PowerSeries with nonzero first term.")
+        def _x():
+            for term in (X * L.derivative()).integral(Fraction(1, 1)):
+                yield term
+        def _l():
+            for term in (self.derivative() / X).integral():
+                yield term
+        X = self.__X = PowerSeries(_x)
+        L = self.__L = PowerSeries(_l)
+        return L
 
 
 def nthpower(n, coeff=Fraction(1, 1)):
