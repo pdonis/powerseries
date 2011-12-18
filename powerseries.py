@@ -10,7 +10,8 @@ Developed using Python 2.6.5. May not work in earlier versions since some
 recent features and builtins are used.
 
 This is a Python implementation of the pseudocode in the above paper by
-Doug McIlroy. Back when the paper was first written, McIlroy noted that
+Doug McIlroy, with some additional operations added that the paper did
+not include. Back when the paper was first written, McIlroy noted that
 languages with the key features needed for such an implementation were
 not in common use. Things are certainly different now; the Python
 implementation below is a fairly straightforward expression of the
