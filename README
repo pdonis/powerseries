@@ -6,7 +6,11 @@ Based on http://doc.cat-v.org/bell_labs/squinting_at_power_series/squint.pdf.
 
 This is a Python implementation of the pseudocode in the above paper by
 Doug McIlroy, with some additional operations added that the paper did
-not include. Back when the paper was first written, McIlroy noted that
+not include. I have also added a module that uses the power series
+implementation to compute functions represented by series, with simple
+convergence testing.
+
+Back when McIlroy's paper was first written, he noted that programming
 languages with the key features needed for such an implementation were
 not in common use. Things are certainly different now; the Python
 implementation given here is a fairly straightforward expression of
@@ -19,7 +23,7 @@ All of the Haskell definitions there are one-liners. But I like Python,
 and AFAIK no one has done an implementation of this stuff in Python,
 so there you are. :-)
 
-See the docstring in powerseries.py for more information.
+See the docstrings in powerseries.py and powerfunc.py for more information.
 
 Released under the open source MIT license:
 http://www.opensource.org/licenses/MIT
