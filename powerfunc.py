@@ -189,7 +189,12 @@ class PowerFunction(object):
         class field ``ratio_max``), we conclude that the series is
         diverging. This is still not an analytical proof, of course;
         but it is a reasonable heuristic, and it works for all of
-        the example series in ``powerseries.py``.
+        the example series in ``powerseries.py``. The only caveat
+        is that some series (e.g., arctan) start diverging only
+        after a large number of terms for values of x close to
+        the convergence limit (e.g., try arctan(1.01)), so the
+        divergence test may not spot them unless the ``terms``
+        parameter is set high enough.
         
         Note that this definition of divergence also cannot take
         account of periodic functions; our series representation
@@ -204,9 +209,9 @@ class PowerFunction(object):
         """
         if term != 0:
             self.__terms_last.append(term)
-            if abs(sum(self.__terms_last)) < (error * result):
+            if abs(sum(self.__terms_last)) < abs(error * result):
                 return True
-            if self.__ratio_last and ((term / self.__ratio_last) > 1):
+            if self.__ratio_last and (abs(term / self.__ratio_last) > 1):
                 self.__ratio_count += 1
             if self.__ratio_count > self.ratio_max:
                 raise DivergenceError("Series failed ratio test.")
