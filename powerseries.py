@@ -419,9 +419,8 @@ class PowerSeries(object):
         True
         """
         oid = id(other)
-        oC = self.__Cs.get(oid)
-        if oC:
-            return oC
+        if oid in self.__Cs:
+            return self.__Cs[oid]
         if isinstance(other, PowerSeries):
             if other.zero != 0:
                 raise ValueError("First term of composed PowerSeries must be 0.")
@@ -470,9 +469,8 @@ class PowerSeries(object):
         >>> cos == cos.integral().derivative()
         True
         """
-        cI = self.__Is.get(const)
-        if cI:
-            return cI
+        if const in self.__Is:
+            return self.__Is[const]
         def _i():
             yield const
             for n, term in enumerate(self):
@@ -615,7 +613,7 @@ def nthpower(n, coeff=Fraction(1, 1)):
     
     These series have many uses, particularly the first two, nthpower(0) and
     nthpower(1), representing 1 and x. We can easily check that the series
-    multiply as expected for pure powers of x (unfortunately we can't check
+    behave as expected for pure powers of x (unfortunately we can't check
     division since we can't take reciprocals for series whose first terms
     are zero, which leaves out all these series except the zeroth):
     
