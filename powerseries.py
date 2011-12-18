@@ -78,6 +78,8 @@ gives back itself (and similarly for other series).
     >>> testseries = [S for S in allseries if S.zero != 0]
     >>> all(s * (ONE / s) == ONE for s in testseries)
     True
+    >>> all(sqrt(s) * sqrt(s) == s for s in testseries)
+    True
     >>> testseries = [S for S in allseries if S.zero == 0 and S is not ZERO]
     >>> all(inv(inv(s)) == s for s in testseries)
     True
@@ -111,7 +113,7 @@ gives back itself (and similarly for other series).
 
 from fractions import Fraction
 from itertools import count, islice, izip, izip_longest
-from math import factorial
+from math import factorial, sqrt as _sqrt, exp as _exp
 
 from cached_property import cached_property
 from memoize_generator import memoize_generator
@@ -159,7 +161,7 @@ class PowerSeries(object):
             # Empty series
             self.__g = None
         # Internal fields for storing cached results of operations
-        self.__D = self.__X = self.__R = self.__I = None
+        self.__D = self.__X = self.__R = self.__I = self.__S = None
         self.__Cs = {}
         self.__Is = {}
     
@@ -582,6 +584,30 @@ class PowerSeries(object):
                 yield term
         I = self.__I = PowerSeries(_i)
         return I
+    
+    def squareroot(self):
+        """Return a PowerSeries representing sqrt(self).
+        
+        The square root obeys the obvious identity:
+        
+        >>> EXP = expseries()
+        >>> (EXP.squareroot() * EXP.squareroot()) == EXP
+        True
+        
+        Note that we can't take the square root of a series with a zero first term by
+        this method.
+        """
+        if self.__S:
+            return self.__S
+        if self.zero == 0:
+            raise ValueError("Cannot take square root of PowerSeries with zero first term.")
+        def _s():
+            s0 = Fraction.from_float(_sqrt(self.zero))
+            yield s0
+            for term in (self.tail * ((s0 * nthpower(0)) + S).reciprocal()):
+                yield term
+        S = self.__S = PowerSeries(_s)
+        return S
 
 
 def nthpower(n, coeff=Fraction(1, 1)):
@@ -610,13 +636,23 @@ def nthpower(n, coeff=Fraction(1, 1)):
 def exp(S):
     """Convenience function for exponentiating PowerSeries.
     
-    This can also replace the ``exp`` builtin, extending it to take
-    a PowerSeries as an argument.
+    This can also replace the ``math.exp`` function, extending it to
+    take a PowerSeries as an argument.
     """
     if isinstance(S, PowerSeries):
         return S.exponential()
-    from math import exp
-    return exp(S)
+    return _exp(S)
+
+
+def sqrt(S):
+    """Convenience function for taking square roots of PowerSeries.
+    
+    This can also replace the ``math.sqrt`` function, extending it to
+    take a PowerSeries as an argument.
+    """
+    if isinstance(S, PowerSeries):
+        return S.squareroot()
+    return _sqrt(S)
 
 
 def inv(S):
