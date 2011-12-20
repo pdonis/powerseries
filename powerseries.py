@@ -596,7 +596,7 @@ class PowerSeries(object):
         True
         
         Note that we can't take the square root of a series with a zero first term by
-        this method.
+        this method, because we need to take a reciprocal.
         """
         if self.__S:
             return self.__S
