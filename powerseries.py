@@ -945,6 +945,10 @@ def tanseries():
 def secseries():
     """The secant function as a PowerSeries.
     
+    We use a quicker method than taking the reciprocal of the
+    cosine series; the integral of sec x is sec x * tan x, and
+    we have a series for tangent.
+    
     >>> secseries().showterms()
     1
     0
@@ -957,7 +961,12 @@ def secseries():
     277/8064
     0
     """
-    return cosseries().reciprocal()
+    def _sec():
+        TAN = tanseries()
+        for term in integ(SEC * TAN, Fraction(1, 1)):
+            yield term
+    SEC = PowerSeries(_sec)
+    return SEC
 
 
 def arcsinseries():
@@ -1128,6 +1137,10 @@ def tanhseries():
 def sechseries():
     """The hyperbolic secant function as a PowerSeries.
     
+    We use a quicker method than taking the reciprocal of the
+    cosh series; the integral of sech x is - sech x * tanh x, and
+    we have a series for tanh.
+    
     >>> sechseries().showterms()
     1
     0
@@ -1140,7 +1153,12 @@ def sechseries():
     277/8064
     0
     """
-    return coshseries().reciprocal()
+    def _sech():
+        TANH = tanhseries()
+        for term in integ(- SECH * TANH, Fraction(1, 1)):
+            yield term
+    SECH = PowerSeries(_sech)
+    return SECH
 
 
 def arcsinhseries():
