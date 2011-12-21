@@ -758,7 +758,7 @@ def altconstseries(const):
     >>> altconstseries(Fraction(1, 1)) == ONE / (ONE + X)
     True
     """
-    return PowerSeries(f=lambda n: Fraction((-1)**n, 1) * const)
+    return PowerSeries(f=lambda n: Fraction((1, -1)[n % 2], 1) * const)
 
 
 def nseries():
@@ -812,7 +812,7 @@ def altharmonicseries():
     >>> integ(altconstseries(Fraction(1, 1))) == altharmonicseries()
     True
     """
-    return PowerSeries(f=lambda n: Fraction((-1)**(n-1), n) if n else Fraction(0, 1))
+    return PowerSeries(f=lambda n: Fraction((-1, 1)[n % 2], n) if n else Fraction(0, 1))
 
 
 def expseries():
