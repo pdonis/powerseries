@@ -975,6 +975,10 @@ def arcsinseries():
     0
     35/1152
     
+    We use a quicker method than inverting the sin
+    series: arcsin is the integral of 1 / sqrt(1 - x^2)
+    with a zero integration constant.
+    
     Test the inverse property:
     
     >>> SIN = sinseries()
@@ -987,7 +991,12 @@ def arcsinseries():
     >>> SIN(ARCSIN) == X
     True
     """
-    return sinseries().inverse()
+    def _arcsin():
+        ONE = nthpower(0)
+        X2 = nthpower(2)
+        for term in integ(ONE / sqrt(ONE - X2)):
+            yield term
+    return PowerSeries(_arcsin)
 
 
 def arctanseries():
@@ -1149,6 +1158,10 @@ def arcsinhseries():
     0
     35/1152
     
+    We use a quicker method than inverting the sinh
+    series: arcsinh is the integral of 1 / sqrt(1 + x^2)
+    with a zero integration constant.
+    
     Test the inverse property:
     
     >>> SINH = sinhseries()
@@ -1161,7 +1174,12 @@ def arcsinhseries():
     >>> SINH(ARCSINH) == X
     True
     """
-    return sinhseries().inverse()
+    def _arcsinh():
+        ONE = nthpower(0)
+        X2 = nthpower(2)
+        for term in integ(ONE / sqrt(ONE + X2)):
+            yield term
+    return PowerSeries(_arcsinh)
 
 
 def arctanhseries():
