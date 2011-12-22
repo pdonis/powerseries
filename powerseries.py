@@ -1247,8 +1247,8 @@ def arctanhseries():
     return PowerSeries(_arctanh)
 
 
-# Alternate implementations of some series using factorials, provided
-# for comparison
+# Alternate implementations of basic series using factorials, provided
+# for comparison, along with derived series using reciprocals/inverses
 
 
 def altexpseries():
