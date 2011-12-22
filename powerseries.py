@@ -945,9 +945,11 @@ def tanseries():
 def secseries():
     """The secant function as a PowerSeries.
     
-    We use a quicker method than taking the reciprocal of the
-    cosine series; the integral of sec x is sec x * tan x, and
-    we have a series for tangent.
+    We use the fact that the integral of sec x is sec x * tan x,
+    and our series for tangent, to construct the series. As with
+    the tangent series, this is not as simple as taking the
+    reciprocal of the cosine series, but should be similar in
+    terms of speed (and indeed appears to be).
     
     >>> secseries().showterms()
     1
@@ -984,9 +986,11 @@ def arcsinseries():
     0
     35/1152
     
-    We use a quicker method than inverting the sin
-    series: arcsin is the integral of 1 / sqrt(1 - x^2)
-    with a zero integration constant.
+    We use the fact that arcsin is the integral of
+    1 / sqrt(1 - x^2) with a zero integration constant
+    to construct the series. This should be at least
+    as fast as taking the inverse of the sine series,
+    and indeed it appears to be.
     
     Test the inverse property:
     
@@ -1023,9 +1027,11 @@ def arctanseries():
     0
     1/9
     
-    We use a quicker method than inverting the tangent
-    series: arctangent is the integral of 1 / (1 + x^2)
-    with a zero integration constant.
+    We use the fact that arctangent is the integral of
+    1 / (1 + x^2) with a zero integration constant to
+    construct the series. We expect this, if anything,
+    to be faster than taking the inverse of the tangent
+    series, since an inverse involves an extra multiplication.
     
     Test the inverse property:
     
@@ -1137,9 +1143,9 @@ def tanhseries():
 def sechseries():
     """The hyperbolic secant function as a PowerSeries.
     
-    We use a quicker method than taking the reciprocal of the
-    cosh series; the integral of sech x is - sech x * tanh x, and
-    we have a series for tanh.
+    We use the fact that the integral of sech x is - sech x * tanh x,
+    and the known series for tanh, to construct the series. Similar
+    remarks apply here as with the secant series, above.
     
     >>> sechseries().showterms()
     1
@@ -1176,9 +1182,10 @@ def arcsinhseries():
     0
     35/1152
     
-    We use a quicker method than inverting the sinh
-    series: arcsinh is the integral of 1 / sqrt(1 + x^2)
-    with a zero integration constant.
+    We use the fact that arcsinh is the integral of
+    1 / sqrt(1 + x^2) with a zero integration constant
+    to construct the series. See remarks under the
+    arcsin series, above.
     
     Test the inverse property:
     
@@ -1215,9 +1222,10 @@ def arctanhseries():
     0
     1/9
     
-    We use a quicker method than inverting the tanh
-    series: arctanh is the integral of 1 / (1 - x^2)
-    with a zero integration constant.
+    We use the fact that arctanh is the integral of
+    1 / (1 - x^2) with a zero integration constant to
+    construct the series. See remarks under the
+    arctan series, above.
     
     Test the inverse property:
     
@@ -1296,6 +1304,39 @@ def alttanseries():
     return altsinseries() / altcosseries()
 
 
+def altsecseries():
+    """Alternate way of representing secant as a PowerSeries.
+    
+    Check the alternate representation:
+    
+    >>> secseries() == altsecseries()
+    True
+    """
+    return altcosseries().reciprocal()
+
+
+def altarcsinseries():
+    """Alternate way of representing arcsin as a PowerSeries.
+    
+    Check alternate representation:
+    
+    >>> arcsinseries() == altarcsinseries()
+    True
+    """
+    return altsinseries().inverse()
+
+
+def altarctanseries():
+    """Alternate way of representing arctan as a PowerSeries.
+    
+    Check alternate representation:
+    
+    >>> arctanseries() == altarctanseries()
+    True
+    """
+    return alttanseries().inverse()
+
+
 def altsinhseries():
     """Alternate way of representing hyperbolic sine as a PowerSeries.
     
@@ -1333,6 +1374,39 @@ def alttanhseries():
     True
     """
     return altsinhseries() / altcoshseries()
+
+
+def altsechseries():
+    """Alternate way of representing hyperbolic secant as a PowerSeries.
+    
+    Check the alternate representation:
+    
+    >>> sechseries() == altsechseries()
+    True
+    """
+    return altcoshseries().reciprocal()
+
+
+def altarcsinhseries():
+    """Alternate way of representing hyperbolic arcsin as a PowerSeries.
+    
+    Check alternate representation:
+    
+    >>> arcsinhseries() == altarcsinhseries()
+    True
+    """
+    return altsinhseries().inverse()
+
+
+def altarctanhseries():
+    """Alternate way of representing hyperbolic arctan as a PowerSeries.
+    
+    Check alternate representation:
+    
+    >>> arctanhseries() == altarctanhseries()
+    True
+    """
+    return alttanhseries().inverse()
 
 
 if __name__ == '__main__':
