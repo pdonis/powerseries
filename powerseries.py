@@ -1276,7 +1276,7 @@ def altsinseries():
     >>> sinseries() == altsinseries()
     True
     """
-    return PowerSeries(f=lambda n: Fraction((-1)**((n-1)/2), factorial(n)) if (n % 2) == 1 else Fraction(0, 1))
+    return PowerSeries(f=lambda n: Fraction((1, -1)[(n//2) % 2], factorial(n)) if (n % 2) == 1 else Fraction(0, 1))
 
 
 def altcosseries():
@@ -1290,7 +1290,7 @@ def altcosseries():
     >>> cosseries() == altcosseries()
     True
     """
-    return PowerSeries(f=lambda n: Fraction((-1)**(n/2), factorial(n)) if (n % 2) == 0 else Fraction(0, 1))
+    return PowerSeries(f=lambda n: Fraction((1, -1)[(n//2) % 2], factorial(n)) if (n % 2) == 0 else Fraction(0, 1))
 
 
 def alttanseries():
