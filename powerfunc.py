@@ -131,7 +131,7 @@ class PowerFunction(object):
         that we only compute ``terms_max`` terms; this ensures that
         we don't loop forever (or at least for a very long time) in
         cases where we are close to the edge of the circle of
-        convergence (for example, computingthe tangent of a number
+        convergence (for example, computing the tangent of a number
         close to pi/2).
         
         If ``terms`` is provided, that number of terms is computed

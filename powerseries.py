@@ -157,8 +157,8 @@ class PowerSeries(object):
             self.__g = _g
         elif l:
             def _l():
-                for n in xrange(len(l)):
-                    yield l[n]
+                for t in l:
+                    yield t
             self.__g = _l
         else:
             # Empty series
@@ -1247,8 +1247,23 @@ def arctanhseries():
     return PowerSeries(_arctanh)
 
 
-# Alternate implementations of basic series using factorials, provided
-# for comparison, along with derived series using reciprocals/inverses
+# Alternate implementations of certain series, for comparison
+
+def altnthpower(n, coeff=Fraction(1, 1)):
+    """Alternate implementation of nth power using lists.
+    
+    This implementation tests the usage of a finite list in the
+    ``PowerSeries`` constructor.
+    
+    Test equivalence with standard nth power function:
+    
+    >>> all(altnthpower(n) == nthpower(n) for n in xrange(10))
+    True
+    """
+    _l = [coeff]
+    if n > 0:
+        _l = ([Fraction(0, 1)] * n) + _l
+    return PowerSeries(l=_l)
 
 
 def altexpseries():
