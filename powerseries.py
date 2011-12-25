@@ -243,7 +243,7 @@ class PowerSeries(object):
     def zero(self):
         """Return the zeroth term of this series.
         """
-        for term in islice(self, 1):
+        for term in self:
             return term
     
     @cached_property
