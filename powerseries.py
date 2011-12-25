@@ -60,13 +60,31 @@ gives back itself (and similarly for other series).
     True
     >>> all(s == s.head + s.tail.xmul for s in testseries)
     True
+    >>> all(s == s + Fraction(0, 1) for s in testseries)
+    True
+    >>> all(s == Fraction(0, 1) + s for s in testseries)
+    True
     >>> all(s == s + ZERO for s in testseries)
     True
     >>> all(s == ZERO + s for s in testseries)
     True
+    >>> all(s == s - Fraction(0, 1) for s in testseries)
+    True
+    >>> all((- s) == Fraction(0, 1) - s for s in testseries)
+    True
+    >>> all(s == s - ZERO for s in testseries)
+    True
+    >>> all((- s) == ZERO - s for s in testseries)
+    True
+    >>> all(s == s * Fraction(1, 1) for s in testseries)
+    True
+    >>> all(s == Fraction(1, 1) * s for s in testseries)
+    True
     >>> all(s == s * ONE for s in testseries)
     True
     >>> all(s == ONE * s for s in testseries)
+    True
+    >>> all(s == s / Fraction(1, 1) for s in testseries)
     True
     >>> all(s == s / ONE for s in testseries)
     True
@@ -302,6 +320,9 @@ class PowerSeries(object):
     def __add__(self, other):
         """Return a PowerSeries instance that sums self and other.
         
+        If ``other`` is a number, it is coerced into a power series
+        with that number as the zeroth term (i.e., a constant).
+        
         Addition of a number obeys the usual arithmetic identities:
         
         >>> e = expseries()
@@ -311,10 +332,8 @@ class PowerSeries(object):
         True
         """
         if isinstance(other, Fraction):
-            def _a():
-                for term in self:
-                    yield other + term
-        elif isinstance(other, PowerSeries):
+            other = nthpower(0, coeff=other)
+        if isinstance(other, PowerSeries):
             def _a():
                 for terms in izip_longest(self, other, fillvalue=Fraction(0, 1)):
                     yield sum(terms)
@@ -325,9 +344,28 @@ class PowerSeries(object):
     __radd__ = __add__
     
     def __sub__(self, other):
-        if isinstance(other, PowerSeries):
-            return self + (- other)
-        return NotImplemented
+        """Return a PowerSeries instance representing self - other.
+        
+        The addition method handles all the hard work, and the same identities
+        hold when subtracting zero:
+        
+        >>> e = expseries()
+        >>> e == e - Fraction(0, 1)
+        True
+        """
+        return self + (- other)
+    
+    def __rsub__(self, other):
+        """Return a PowerSeries instance representing other - self.
+        
+        Again, the addition method handles the hard work, and we can test a
+        similar identity to the above:
+        
+        >>> e = expseries()
+        >>> Fraction(0, 1) - e == (- e)
+        True
+        """
+        return other + (- self)
     
     def __mul__(self, other):
         """Return a PowerSeries instance that multiplies self and other.
@@ -396,10 +434,15 @@ class PowerSeries(object):
         >>> e = expseries()
         >>> e / e == nthpower(0)
         True
+        >>> e / Fraction(1, 1) == e
+        True
         """
-        if isinstance(other, PowerSeries):
+        if isinstance(other, Fraction):
+            return self * (Fraction(1, 1) / other)
+        elif isinstance(other, PowerSeries):
             return self * other.reciprocal()
-        return NotImplemented
+        else:
+            return NotImplemented
     
     def __rdiv__(self, other):
         """Easier way of accessing the reciprocal of self.
