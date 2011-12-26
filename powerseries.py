@@ -134,7 +134,6 @@ gives back itself (and similarly for other series).
 
 from fractions import Fraction
 from itertools import count, islice, izip, izip_longest
-from math import factorial, sqrt as _sqrt, exp as _exp, log as _log
 
 from cached_property import cached_property
 from memoize_generator import memoize_generator
@@ -337,9 +336,8 @@ class PowerSeries(object):
             def _a():
                 for terms in izip_longest(self, other, fillvalue=Fraction(0, 1)):
                     yield sum(terms)
-        else:
-            return NotImplemented
-        return PowerSeries(_a)
+            return PowerSeries(_a)
+        return NotImplemented
     
     __radd__ = __add__
     
@@ -439,10 +437,9 @@ class PowerSeries(object):
         """
         if isinstance(other, Fraction):
             return self * (Fraction(1, 1) / other)
-        elif isinstance(other, PowerSeries):
+        if isinstance(other, PowerSeries):
             return self * other.reciprocal()
-        else:
-            return NotImplemented
+        return NotImplemented
     
     def __rdiv__(self, other):
         """Easier way of accessing the reciprocal of self.
@@ -645,6 +642,7 @@ class PowerSeries(object):
             return self.__S
         if self.zero == 0:
             raise ValueError("Cannot take square root of PowerSeries with zero first term.")
+        from math import sqrt as _sqrt
         def _s():
             s0 = Fraction.from_float(_sqrt(self.zero))
             yield s0
@@ -723,6 +721,7 @@ def exp(S):
     This can also replace the ``math.exp`` function, extending it to
     take a PowerSeries as an argument.
     """
+    from math import exp as _exp
     if isinstance(S, PowerSeries):
         return S.exponential()
     return _exp(S)
@@ -734,6 +733,7 @@ def log(S):
     This can also replace the ``math.log`` function, extending it to
     take a PowerSeries as an argument.
     """
+    from math import log as _log
     if isinstance(S, PowerSeries):
         return S.logarithm()
     return _log(S)
@@ -745,6 +745,7 @@ def sqrt(S):
     This can also replace the ``math.sqrt`` function, extending it to
     take a PowerSeries as an argument.
     """
+    from math import sqrt as _sqrt
     if isinstance(S, PowerSeries):
         return S.squareroot()
     return _sqrt(S)
@@ -1320,6 +1321,7 @@ def altexpseries():
     >>> expseries() == altexpseries()
     True
     """
+    from math import factorial
     return PowerSeries(f=lambda n: Fraction(1, factorial(n)))
 
 
@@ -1334,6 +1336,7 @@ def altsinseries():
     >>> sinseries() == altsinseries()
     True
     """
+    from math import factorial
     return PowerSeries(f=lambda n: Fraction((1, -1)[(n//2) % 2], factorial(n)) if (n % 2) == 1 else Fraction(0, 1))
 
 
@@ -1348,6 +1351,7 @@ def altcosseries():
     >>> cosseries() == altcosseries()
     True
     """
+    from math import factorial
     return PowerSeries(f=lambda n: Fraction((1, -1)[(n//2) % 2], factorial(n)) if (n % 2) == 0 else Fraction(0, 1))
 
 
@@ -1406,6 +1410,7 @@ def altsinhseries():
     >>> sinhseries() == altsinhseries()
     True
     """
+    from math import factorial
     return PowerSeries(f=lambda n: Fraction(1, factorial(n)) if (n % 2) == 1 else Fraction(0, 1))
 
 
@@ -1420,6 +1425,7 @@ def altcoshseries():
     >>> coshseries() == altcoshseries()
     True
     """
+    from math import factorial
     return PowerSeries(f=lambda n: Fraction(1, factorial(n)) if (n % 2) == 0 else Fraction(0, 1))
 
 
