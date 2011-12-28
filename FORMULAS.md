@@ -94,7 +94,7 @@ which we can then integrate to obtain
 
 This is sufficient to implement the recursive generator, since all
 operations are now known, and the constant e0 is known to be 1 so
-the integral can get started.bar
+the integral can get started.
 
 Reciprocal
 ----------
