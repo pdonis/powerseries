@@ -20,7 +20,7 @@ of convergence issues.
 Test with the example functions from ``powerseries.py``:
     
     >>> from powerseries import *
-    >>> names = ['exp', 'sin', 'cos', 'tan', 'sec', 'arcsin', 'arctan', 'sinh', 'cosh', 'tanh', 'arcsinh', 'arctanh']
+    >>> names = ['exp', 'sin', 'cos', 'tan', 'sec', 'arcsin', 'arctan', 'sinh', 'cosh', 'tanh', 'sech', 'arcsinh', 'arctanh']
     >>> for name in names:
     ...     f = PowerFunction(globals()['%sseries' % name]())
     ...     print name
@@ -68,6 +68,10 @@ Test with the example functions from ``powerseries.py``:
     f(0) 0
     f(1) 12517580680408876/16436269594119375
     f(1) to 10 figures 140071833206259684360514733360266214425802526857/183919259482622027378055212928674670653291015625
+    sech
+    f(0) 1
+    f(1) 728393474991766957889/1124000727777607680000
+    f(1) to 10 figures 1149270150629130793277950235059771443262633484498445320147447/1773416513219438952980327006767625005503069479239680000000000
     arcsinh
     f(0) 0
     f(1) 6014169722227115002607630537270917/6814870934827565564370797513932800

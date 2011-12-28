@@ -152,7 +152,7 @@ class PowerSeries(object):
     testlimit = 10
     
     def __init__(self, g=None, f=None, l=None):
-        """Construct a PowerSeries from a term function, generator, or list.
+        """Construct a PowerSeries from a generator, term function, or list.
         
         If ``g`` is given, construct the series using ``g`` as its generator.
         
@@ -646,7 +646,7 @@ class PowerSeries(object):
         def _s():
             s0 = Fraction.from_float(_sqrt(self.zero))
             yield s0
-            for term in (self.tail * ((s0 * nthpower(0)) + S).reciprocal()):
+            for term in (self.tail * (s0 + S).reciprocal()):
                 yield term
         S = self.__S = PowerSeries(_s)
         return S
@@ -681,13 +681,9 @@ class PowerSeries(object):
             return self.__L
         if self.zero != 0:
             raise ValueError("Cannot take logarithm of PowerSeries with nonzero first term.")
-        def _x():
-            for term in (X * L.derivative()).integral(Fraction(1, 1)):
-                yield term
         def _l():
-            for term in (self.derivative() / X).integral():
+            for term in (self.derivative() / (Fraction(1, 1) + self)).integral():
                 yield term
-        X = self.__X = PowerSeries(_x)
         L = self.__L = PowerSeries(_l)
         return L
 
