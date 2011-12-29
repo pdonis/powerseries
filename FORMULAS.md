@@ -142,6 +142,8 @@ we get
     I1 = 1 / f1 (1 - x I1 * I1 * F2(I))
 
 This is now sufficient to implement the generator recursively.
+Note that the first term of I being zero is also required so
+that the composition F2(I) can proceed.
 
 Square Root
 -----------
