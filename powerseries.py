@@ -135,10 +135,12 @@ gives back itself (and similarly for other series).
 from fractions import Fraction
 from itertools import count, islice, izip, izip_longest
 
+from cached_class import cached_class
 from cached_property import cached_property
 from memoize_generator import memoize_generator
 
 
+@cached_class
 class PowerSeries(object):
     """Power series encapsulation.
     
@@ -147,6 +149,12 @@ class PowerSeries(object):
     generator that yields the coefficients one by one. Operations on
     the series are implemented as construction of new generator
     functions in terms of existing ones.
+    
+    Note that we "cache" this class so only one instance of it will
+    exist for each distinct power series (as determined by the set
+    of arguments). This reduces object churn, particularly for series
+    that are commonly used, such as the empty series, and thus helps
+    to speed computations.
     """
     
     testlimit = 10
