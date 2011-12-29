@@ -146,6 +146,8 @@ each time, even for values that compare equal:
     
 """
 
+from functools import wraps
+
 
 def cached_class(klass):
     """Decorator to cache class instances by constructor arguments.
@@ -155,24 +157,11 @@ def cached_class(klass):
     so are always hashable, but if any arguments (keyword
     or positional) are non-hashable, that set of arguments
     is not cached.
-    
-    Note that we have to go through some gyrations with a
-    custom metaclass to make the decorated class work properly
-    with ``isinstance`` and ``issubclass``.
     """
     cache = {}
-    class _meta(type):
-        # Metaclass for decorated class
-        def __instancecheck__(cls, instance):
-            return isinstance(instance, klass)
-        def __subclasscheck__(cls, subclass):
-            return issubclass(subclass, klass)
-    _meta.__name__ = '%sMeta' % klass.__name__
-    _meta.__module__ = klass.__module__
+    @wraps(klass, assigned=('__name__', '__module__'), updated=())
     class _decorated(klass):
-        # This makes isinstance and issubclass work properly
-        __metaclass__ = _meta
-        # Can't do this in update_wrapper below because __doc__
+        # The wraps decorator can't do this because __doc__
         # isn't writable once the class is created
         __doc__ = klass.__doc__
         def __new__(cls, *args, **kwds):
@@ -194,6 +183,9 @@ def cached_class(klass):
                 # object.__new__ takes no parameters (and in
                 # Python 3 the warning will become an error)
                 inst = klass(*args, **kwds)
+                # This makes isinstance and issubclass work
+                # properly
+                inst.__class__ = _decorated
                 if key is not None:
                     cache[key] = inst
             return inst
@@ -202,8 +194,6 @@ def cached_class(klass):
             # called, so we skip initializing here and do
             # it only when the instance is created above
             pass
-    _decorated.__name__ = klass.__name__
-    _decorated.__module__ = klass.__module__
     return _decorated
 
 
