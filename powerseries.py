@@ -1316,16 +1316,19 @@ def altnthpower(n, coeff=Fraction(1, 1)):
     """Alternate implementation of nth power using lists.
     
     This implementation tests the usage of a finite list in the
-    ``PowerSeries`` constructor.
+    ``PowerSeries`` constructor. Note that we actually use a
+    tuple since that allows the caching of instances by
+    constructor argument to work (a list would not be hashable
+    so no caching would occur).
     
     Test equivalence with standard nth power function:
     
     >>> all(altnthpower(n) == nthpower(n) for n in xrange(10))
     True
     """
-    _l = [coeff]
+    _l = (coeff,)
     if n > 0:
-        _l = ([Fraction(0, 1)] * n) + _l
+        _l = ((Fraction(0, 1),) * n) + _l
     return PowerSeries(l=_l)
 
 
