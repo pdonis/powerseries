@@ -38,9 +38,7 @@ By expanding the various series involved in each operation in this way,
 we can reduce the operation to other known operations, such as those
 given above and those defined below prior to the operation of interest,
 *plus* the operation of interest itself, provided it is applied to a
-derived series, i.e., one obtained from one of the original series via
-another already known operation (the most common is tail extraction,
-as will be seen).
+different set of arguments (i.e., no infinite loops).
 
 Multiplication
 --------------
@@ -51,7 +49,7 @@ We have two series, F and G, which multiply as follows:
     F * G = (f0 + x F1) * (g0 + x G1)
           = f0 g0 + x (f0 G1 + g0 F1 + x F1 * G1)
 
-All of the operations are now known, so this formula is sufficient to
+All of the operations are known, so this formula is sufficient to
 implement multiplication recursively.
 
 Composition
@@ -83,10 +81,10 @@ We seek a series E = exp(F) defined by
 
     E = e0 + x E1 = exp(f0 + x F1) = exp(f0) exp(x F1)
 
-To ensure that e0 is rational we stipulate that f0 = 0. Then we use
-a neat trick; differentiating the above gives
+To ensure that e0 is rational we stipulate that f0 = 0, which makes
+e0 = 1. Then we use a neat trick; differentiating E = exp(F) gives
 
-    dE/dx = d/dx exp(F) = exp(F) dF/dx
+    dE/dx = d/dx exp(F) = exp(F) dF/dx = E * dF/dx
 
 which we can then integrate to obtain
 
@@ -104,7 +102,11 @@ Here we seek a series R = 1 / F, or F * R = 1, so that
     F * R = f0 r0 + x (f0 R1 + r0 F1 + x F1 * R1) = 1
 
 We can see that r0 = 1 / f0, and the coefficient of x must be zero,
-which gives us an equation for R1 in terms of R, so we have
+which gives
+
+    R1 = - 1 / f0 (F1 * (r0 + x R1))
+
+So we have
 
     R = r0 + x R1 = 1 / f0 (1 - x F1 * R)
 
@@ -134,15 +136,12 @@ through by x gives
 
     I1 * F1(I) = I1 * (f1 + x I1 F2(I)) = 1
 
-Similar to the reciprocal above, we see that i1 = 1 / f1 and the
-formula rearranges to
+Moving the x term to the other side and dividing through by f1,
+we get
 
-    I1 = i1 + x I2 = 1 / f1 (1 - x I1 * I1 * F2(I))
+    I1 = 1 / f1 (1 - x I1 * I1 * F2(I))
 
-This is now sufficient to implement the generator since the first
-term i0 and the second term i1 are both known, so the double
-multiplication and composition on the right will have enough terms
-to get started.
+This is now sufficient to implement the generator recursively.
 
 Square Root
 -----------

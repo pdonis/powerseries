@@ -181,7 +181,9 @@ class PowerSeries(object):
             # Empty series
             self.__g = None
         # Internal fields for storing cached results of operations
-        self.__D = self.__E = self.__R = self.__I = self.__S = self.__L = self.__X = None
+        self.__D = self.__E = self.__R = self.__I = self.__S = self.__L = None
+        self.__As = {}
+        self.__Ms = {}
         self.__Cs = {}
         self.__Is = {}
     
@@ -331,12 +333,19 @@ class PowerSeries(object):
         True
         """
         if isinstance(other, Fraction):
+            oid = other
             other = nthpower(0, coeff=other)
+        else:
+            oid = None
         if isinstance(other, PowerSeries):
+            oid = oid or id(other)
+            if oid in self.__As:
+                return self.__As[oid]
             def _a():
                 for terms in izip_longest(self, other, fillvalue=Fraction(0, 1)):
                     yield sum(terms)
-            return PowerSeries(_a)
+            A = self.__As[oid] = PowerSeries(_a)
+            return A
         return NotImplemented
     
     __radd__ = __add__
@@ -383,15 +392,20 @@ class PowerSeries(object):
         we avoid realizing our own generator.
         """
         if isinstance(other, Fraction):
+            if other == 1:
+                return self
             if other == 0:
-                def _m():
-                    for n in count():
-                        yield other
-            else:
-                def _m():
-                    for term in self:
-                        yield other * term
+                return PowerSeries()
+            if other in self.__Ms:
+                return self.__Ms[other]
+            def _m():
+                for term in self:
+                    yield other * term
+            oid = other
         elif isinstance(other, PowerSeries):
+            oid = id(other)
+            if oid in self.__Ms:
+                return self.__Ms[oid]
             def _m():
                 f0 = self.zero
                 g0 = other.zero
@@ -407,7 +421,8 @@ class PowerSeries(object):
                     yield sum(terms)
         else:
             return NotImplemented
-        return PowerSeries(_m)
+        M = self.__Ms[oid] = PowerSeries(_m)
+        return M
     
     __rmul__ = __mul__
     
@@ -677,7 +692,7 @@ class PowerSeries(object):
         >>> X.logarithm().exponential() - ONE == X
         True
         """
-        if self.__X and self.__L:
+        if self.__L:
             return self.__L
         if self.zero != 0:
             raise ValueError("Cannot take logarithm of PowerSeries with nonzero first term.")
