@@ -159,6 +159,7 @@ def cached_class(klass):
     is not cached.
     """
     cache = {}
+    
     @wraps(klass, assigned=('__name__', '__module__'), updated=())
     class _decorated(klass):
         # The wraps decorator can't do this because __doc__
@@ -194,6 +195,7 @@ def cached_class(klass):
             # called, so we skip initializing here and do
             # it only when the instance is created above
             pass
+    
     return _decorated
 
 
