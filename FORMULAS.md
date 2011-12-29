@@ -37,7 +37,7 @@ represent a series as the head plus x times the tail:
 By expanding the various series involved in each operation in this way,
 we can reduce the operation to other known operations, such as those
 given above and those defined below prior to the operation of interest,
-*plus* the operation of interest itself, provided it is applied to a
+*plus* the operation of interest itself, provided it is applied with a
 different set of arguments (i.e., no infinite loops).
 
 Multiplication
