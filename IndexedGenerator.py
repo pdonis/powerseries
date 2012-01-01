@@ -319,9 +319,9 @@ class IndexedGenerator(object):
                 self.__empty = True
             else:
                 self.__cache.append(term)
-        if self.__empty and (n >= len(self.__cache)):
-            return self.sentinel
-        return self.__cache[n]
+        if n < len(self.__cache):
+            return self.__cache[n]
+        return self.sentinel
     
     def _iterable(self):
         # Yield terms from the generator
