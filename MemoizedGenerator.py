@@ -97,6 +97,14 @@ class MemoizedGenerator(object):
     realizations of the memoized generator run in the same thread,
     so that it is guaranteed that no more than one realization will
     be mutating the memoization fields at a time.
+    
+    Note also that this class memoizes all realizations of its underlying
+    generator, even if they are invoked with different arguments. For
+    the usage here, this is not an issue, but it may be for other use
+    cases. For a more "production" implementation that handles this
+    issue correctly, see the ``plib`` library on PyPI at:
+        
+        http://pypi.python.org/pypi/plib
     """
     
     def __init__(self, gen):
