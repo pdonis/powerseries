@@ -282,9 +282,13 @@ class IndexedGenerator(object):
     into it will still retrieve items already yielded.
     
     Like ``MemoizedGenerator``, this class can only be used
-    directly to decorate an ordinary function. It is recommended
-    that the ``indexable_generator`` decorator be used instead
-    since it works on methods as well.
+    directly to decorate an ordinary function. Also, it memoizes
+    all realizations of its underlying generator, even if they are
+    invoked with different arguments. The more "production"
+    implementation in the ``plib`` library handles this issue
+    correctly; it can be found on PyPI at:
+        
+        http://pypi.python.org/pypi/plib
     """
     
     sentinel = object()

@@ -14,7 +14,14 @@ the implementation is general. For example, it correctly handles
 finite-length generators, even though all ``PowerSeries`` instances
 will look infinite as far as this class is concerned (i.e., a
 wrapped ``PowerSeries`` generator will never set the class's
-internal ``__empty`` flag to ``True``).
+internal ``__empty`` flag to ``True``). However, there is one
+issue it does not handle correctly: it memoizes all realizations
+of its generator, even if they are called with different arguements,
+which is fine for ``PowerSeries`` but is not the desired generic
+behavior. A more "production" implementation that handles this issue
+correctly is in the ``plib`` library, available from PyPI at:
+
+    http://pypi.python.org/pypi/plib
 
 Functional programming types will note that this implementation
 is done using a class, not a function. Doing it as a function in
@@ -101,8 +108,8 @@ class MemoizedGenerator(object):
     Note also that this class memoizes all realizations of its underlying
     generator, even if they are invoked with different arguments. For
     the usage here, this is not an issue, but it may be for other use
-    cases. For a more "production" implementation that handles this
-    issue correctly, see the ``plib`` library on PyPI at:
+    cases. The more "production" implementation in the ``plib`` library
+    handles this issue correctly; it can be found on PyPI at:
         
         http://pypi.python.org/pypi/plib
     """
