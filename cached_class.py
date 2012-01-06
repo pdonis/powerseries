@@ -186,7 +186,7 @@ def cached_class(klass):
                 inst = klass(*args, **kwds)
                 # This makes isinstance and issubclass work
                 # properly
-                inst.__class__ = _decorated
+                inst.__class__ = cls
                 if key is not None:
                     cache[key] = inst
             return inst
