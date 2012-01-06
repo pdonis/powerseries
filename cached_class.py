@@ -166,7 +166,7 @@ def cached_class(klass):
         # isn't writable once the class is created
         __doc__ = klass.__doc__
         def __new__(cls, *args, **kwds):
-            key = args + tuple(kwds.iteritems())
+            key = (cls,) + args + tuple(kwds.iteritems())
             try:
                 inst = cache.get(key, None)
             except TypeError:
